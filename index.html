@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visit Websites</title>
+</head>
+
+<body>
+
+    <label for="frequency">Select Frequency:</label>
+    <select id="frequency">
+        <option value="1">Every Hour</option>
+        <option value="2">Every 2 Hours</option>
+        <option value="3">Every 3 Hours</option>
+        <option value="4">Every 4 Hours</option>
+        <option value="5">Every 5 Hours</option>
+        <option value="6">Every 6 Hours</option>
+        <option value="7">Every 7 Hours</option>
+        <option value="8">Every 8 Hours</option>
+        <option value="9">Every 9 Hours</option>
+        <option value="10">Every 10 Hours</option>
+    </select>
+
+    <button id="startButton" onclick="startVisiting()">Start Visiting</button>
+    <button id="stopButton" onclick="stopVisiting()" disabled>Stop Visiting</button>
+
+    <button onclick="visitInstantly('https://healingpoint.in/?wp_automatic=cron')">Visit Healing Point</button>
+    <button onclick="visitInstantly('https://kafirana.com/?wp_automatic=cron')">Visit Kafirana</button>
+
+    <script>
+        let intervalId;
+
+        // Function to visit both websites
+        function visitWebsites() {
+            const urls = [
+                "https://healingpoint.in/?wp_automatic=cron",
+                "https://kafirana.com/?wp_automatic=cron"
+            ];
+            urls.forEach(url => {
+                fetch(url, { method: 'HEAD' })
+                    .then(response => {
+                        if (response.ok) {
+                            console.log(`Visited ${url} successfully at ${new Date().toLocaleString()}`);
+                        } else {
+                            console.error(`Failed to visit ${url} at ${new Date().toLocaleString()}`);
+                        }
+                    })
+                    .catch(error => {
+                        console.error(`Error: ${error.message}`);
+                    });
+            });
+        }
+
+        // Function to start visiting both websites based on selected frequency
+        function startVisiting() {
+            const frequencySelect = document.getElementById("frequency");
+            const frequencyValue = parseInt(frequencySelect.value);
+            visitWebsites(); // Visit websites immediately
+            intervalId = setInterval(visitWebsites, frequencyValue * 3600000); // Convert hours to milliseconds
+            document.getElementById("startButton").disabled = true;
+            document.getElementById("stopButton").disabled = false;
+        }
+
+        // Function to stop visiting the websites
+        function stopVisiting() {
+            clearInterval(intervalId);
+            document.getElementById("startButton").disabled = false;
+            document.getElementById("stopButton").disabled = true;
+            console.log("Visiting stopped.");
+        }
+
+        // Function to instantly visit a URL
+        function visitInstantly(url) {
+            fetch(url, { method: 'HEAD' })
+                .then(response => {
+                    if (response.ok) {
+                        console.log(`Visited ${url} successfully at ${new Date().toLocaleString()}`);
+                    } else {
+                        console.error(`Failed to visit ${url} at ${new Date().toLocaleString()}`);
+                    }
+                })
+                .catch(error => {
+                    console.error(`Error: ${error.message}`);
+                });
+        }
+    </script>
+
+</body>
+
+</html>
