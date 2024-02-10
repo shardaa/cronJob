@@ -29,8 +29,11 @@
     <button onclick="visitInstantly('https://healingpoint.in/?wp_automatic=cron')">Visit Healing Point</button>
     <button onclick="visitInstantly('https://kafirana.com/?wp_automatic=cron')">Visit Kafirana</button>
 
+    <p id="nextVisitCounter"></p>
+
     <script>
         let intervalId;
+        let nextVisitCounterElement = document.getElementById("nextVisitCounter");
 
         // Function to visit both websites
         function visitWebsites() {
@@ -58,7 +61,11 @@
             const frequencySelect = document.getElementById("frequency");
             const frequencyValue = parseInt(frequencySelect.value);
             visitWebsites(); // Visit websites immediately
-            intervalId = setInterval(visitWebsites, frequencyValue * 3600000); // Convert hours to milliseconds
+            updateNextVisitCounter(frequencyValue * 3600); // Update counter
+            intervalId = setInterval(() => {
+                visitWebsites();
+                updateNextVisitCounter(frequencyValue * 3600); // Update counter
+            }, frequencyValue * 3600000); // Convert hours to milliseconds
             document.getElementById("startButton").disabled = true;
             document.getElementById("stopButton").disabled = false;
         }
@@ -84,6 +91,27 @@
                 .catch(error => {
                     console.error(`Error: ${error.message}`);
                 });
+        }
+
+        // Function to update the next visit counter
+        function updateNextVisitCounter(seconds) {
+            let count = seconds;
+            nextVisitCounterElement.innerText = `Next visit in: ${formatTime(count)}`;
+            const interval = setInterval(() => {
+                count--;
+                nextVisitCounterElement.innerText = `Next visit in: ${formatTime(count)}`;
+                if (count <= 0) {
+                    clearInterval(interval);
+                }
+            }, 1000);
+        }
+
+        // Function to format time in HH:MM:SS
+        function formatTime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const remainingSeconds = seconds % 60;
+            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
         }
     </script>
 
